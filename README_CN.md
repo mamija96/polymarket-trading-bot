@@ -97,6 +97,9 @@ await bot.cancel_order("订单ID")
 
 # 撤销所有订单
 await bot.cancel_all_orders()
+
+# 撤销特定市场的订单
+await bot.cancel_market_orders(market="condition_id", asset_id="token_id")
 ```
 
 ### 获取市场数据
@@ -195,6 +198,7 @@ export POLY_BUILDER_API_PASSPHRASE=你的口令
 | `place_order(token_id, price, size, side)` | 下限价单 |
 | `cancel_order(order_id)` | 撤销指定订单 |
 | `cancel_all_orders()` | 撤销所有挂单 |
+| `cancel_market_orders(market, asset_id)` | 撤销特定市场的订单 |
 | `get_open_orders()` | 获取挂单列表 |
 | `get_trades(limit=100)` | 获取交易历史 |
 | `get_order_book(token_id)` | 获取市场订单簿 |

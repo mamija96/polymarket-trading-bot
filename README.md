@@ -10,7 +10,7 @@ A beginner-friendly Python trading bot for Polymarket with gasless transactions.
 - **Gasless Transactions**: No gas fees with Builder Program credentials
 - **Secure Key Storage**: Private keys encrypted with PBKDF2 + Fernet
 - **Strategy Framework**: Built-in support for custom trading strategies
-- **Fully Tested**: 58 unit tests covering all functionality
+- **Fully Tested**: 89 unit tests covering all functionality
 
 ## Quick Start (5 Minutes)
 
@@ -97,6 +97,9 @@ await bot.cancel_order("order_id_here")
 
 # Cancel all orders
 await bot.cancel_all_orders()
+
+# Cancel orders for a specific market
+await bot.cancel_market_orders(market="condition_id", asset_id="token_id")
 ```
 
 ### Get Market Data
@@ -195,6 +198,7 @@ The bot will automatically use gasless mode when credentials are present.
 | `place_order(token_id, price, size, side)` | Place a limit order |
 | `cancel_order(order_id)` | Cancel a specific order |
 | `cancel_all_orders()` | Cancel all open orders |
+| `cancel_market_orders(market, asset_id)` | Cancel orders for a specific market |
 | `get_open_orders()` | List your open orders |
 | `get_trades(limit=100)` | Get your trade history |
 | `get_order_book(token_id)` | Get market order book |
