@@ -41,7 +41,7 @@ export function StatsCards({ summary, marketsAnalyzed }: StatsCardsProps) {
     },
     {
       title: "Profit Factor",
-      value: summary.profit_factor === Infinity ? "INF" : summary.profit_factor.toFixed(2),
+      value: summary.profit_factor >= 999 ? "INF" : summary.profit_factor.toFixed(2),
       subtitle: `Avg W: $${summary.avg_win.toFixed(2)} / L: $${summary.avg_loss.toFixed(2)}`,
       icon: Activity,
       positive: summary.profit_factor > 1,

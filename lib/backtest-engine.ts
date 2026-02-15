@@ -365,7 +365,7 @@ export function runBacktest(
   const avgLoss = losers.length > 0 ? Math.abs(losers.reduce((s, t) => s + t.pnl, 0) / losers.length) : 0
   const totalWins = winners.reduce((s, t) => s + t.pnl, 0)
   const totalLosses = Math.abs(losers.reduce((s, t) => s + t.pnl, 0))
-  const profitFactor = totalLosses > 0 ? totalWins / totalLosses : totalWins > 0 ? Infinity : 0
+  const profitFactor = totalLosses > 0 ? totalWins / totalLosses : totalWins > 0 ? 999.99 : 0
 
   const exitCounts: Record<string, number> = {}
   for (const t of trades) {
@@ -378,24 +378,28 @@ export function runBacktest(
     trades.length > 1
       ? trades.reduce((s, t) => s + (t.pnl - meanPnl) ** 2, 0) / (trades.length - 1)
       : 0
-  const sharpe = variance > 0 ? meanPnl / Math.sqrt(variance) : 0
+  const stdDev = Math.sqrt(variance)
+  const sharpe = stdDev > 0 && isFinite(stdDev) ? meanPnl / stdDev : 0
+
+  // Safely round numbers, replacing NaN/Infinity with 0
+  const safe = (v: number) => {
+    const r = Math.round(v * 100) / 100
+    return isFinite(r) ? r : 0
+  }
 
   const summary: BacktestSummary = {
-    total_pnl: Math.round(totalPnl * 100) / 100,
-    return_pct:
-      Math.round(
-        ((equity - config.starting_equity) / config.starting_equity) * 10000,
-      ) / 100,
+    total_pnl: safe(totalPnl),
+    return_pct: safe(((equity - config.starting_equity) / config.starting_equity) * 100),
     total_trades: trades.length,
     winning_trades: winners.length,
     losing_trades: losers.length,
-    win_rate: trades.length > 0 ? Math.round((winners.length / trades.length) * 10000) / 100 : 0,
-    avg_win: Math.round(avgWin * 100) / 100,
-    avg_loss: Math.round(avgLoss * 100) / 100,
-    profit_factor: Math.round(profitFactor * 100) / 100,
-    max_drawdown_pct: Math.round(maxDrawdownPct * 100) / 100,
-    max_drawdown_dollars: Math.round(maxDrawdownDollars * 100) / 100,
-    sharpe_ratio: Math.round(sharpe * 100) / 100,
+    win_rate: trades.length > 0 ? safe((winners.length / trades.length) * 100) : 0,
+    avg_win: safe(avgWin),
+    avg_loss: safe(avgLoss),
+    profit_factor: safe(profitFactor),
+    max_drawdown_pct: safe(maxDrawdownPct),
+    max_drawdown_dollars: safe(maxDrawdownDollars),
+    sharpe_ratio: safe(sharpe),
     exit_counts: exitCounts,
   }
 
