@@ -1,6 +1,6 @@
 import { Dashboard } from "@/components/dashboard"
 import { generateSyntheticData, runBacktest } from "@/lib/backtest-engine"
-import type { BacktestConfig } from "@/lib/backtest-types"
+import type { BacktestConfig, BacktestResult } from "@/lib/backtest-types"
 
 /**
  * Generate backtest result server-side.
@@ -9,7 +9,8 @@ import type { BacktestConfig } from "@/lib/backtest-types"
  * - Entry when probability drops by `drop_threshold` within `lookback_seconds`
  * - Exit at take_profit, stop_loss, or market end
  */
-function getBacktestResult() {
+function getBacktestResult(): BacktestResult {
+  console.log("[v0] Generating backtest result...")
   const config: BacktestConfig = {
     drop_threshold: 0.3,
     lookback_seconds: 10,
@@ -21,7 +22,10 @@ function getBacktestResult() {
   }
 
   const markets = generateSyntheticData(60, 0.5, 123)
-  return runBacktest(config, markets)
+  console.log("[v0] Generated", markets.length, "synthetic markets")
+  const result = runBacktest(config, markets)
+  console.log("[v0] Backtest complete:", result.summary.total_trades, "trades, PnL:", result.summary.total_pnl)
+  return result
 }
 
 export default function Page() {
