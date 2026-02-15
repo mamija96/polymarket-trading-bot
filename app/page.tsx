@@ -2,15 +2,7 @@ import { Dashboard } from "@/components/dashboard"
 import { generateSyntheticData, runBacktest } from "@/lib/backtest-engine"
 import type { BacktestConfig, BacktestResult } from "@/lib/backtest-types"
 
-/**
- * Generate backtest result server-side.
- *
- * Uses the same flash crash detection logic as the Python bot:
- * - Entry when probability drops by `drop_threshold` within `lookback_seconds`
- * - Exit at take_profit, stop_loss, or market end
- */
 function getBacktestResult(): BacktestResult {
-  console.log("[v0] Generating backtest result...")
   const config: BacktestConfig = {
     drop_threshold: 0.3,
     lookback_seconds: 10,
@@ -22,14 +14,30 @@ function getBacktestResult(): BacktestResult {
   }
 
   const markets = generateSyntheticData(60, 0.5, 123)
-  console.log("[v0] Generated", markets.length, "synthetic markets")
+  console.log("[v0] Generated", markets.length, "markets")
   const result = runBacktest(config, markets)
-  console.log("[v0] Backtest complete:", result.summary.total_trades, "trades, PnL:", result.summary.total_pnl)
+  console.log("[v0] Backtest done:", result.summary.total_trades, "trades")
   return result
 }
 
 export default function Page() {
-  const result = getBacktestResult()
+  let result: BacktestResult
+
+  try {
+    result = getBacktestResult()
+  } catch (e) {
+    console.error("[v0] Backtest engine error:", e)
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Backtest Error</h1>
+          <p className="mt-2 font-mono text-sm text-muted-foreground">
+            {String(e)}
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return <Dashboard result={result} />
 }
