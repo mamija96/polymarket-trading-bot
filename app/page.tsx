@@ -14,10 +14,7 @@ function getBacktestResult(): BacktestResult {
   }
 
   const markets = generateSyntheticData(60, 0.5, 123)
-  console.log("[v0] Generated", markets.length, "markets")
-  const result = runBacktest(config, markets)
-  console.log("[v0] Backtest done:", result.summary.total_trades, "trades")
-  return result
+  return runBacktest(config, markets)
 }
 
 export default function Page() {
@@ -26,7 +23,6 @@ export default function Page() {
   try {
     result = getBacktestResult()
   } catch (e) {
-    console.error("[v0] Backtest engine error:", e)
     return (
       <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
         <div className="text-center">
